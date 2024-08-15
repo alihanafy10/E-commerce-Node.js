@@ -1,7 +1,7 @@
 
 import { hashSync } from "bcrypt";
 
-import { User } from "../../../Database/Model/index.js";
+import { Address, User } from "../../../Database/Model/index.js";
 import { catchError } from "../../Middleware/index.js";
 import { AppEroor } from "../../Utils/index.js";
 
@@ -9,7 +9,21 @@ import { AppEroor } from "../../Utils/index.js";
  * @api (post) /users/register registration a new user
  */
 const registration = catchError(async (req, res, next) => {
-    const { userName ,email,password,gender,age,phone,userType} = req.body;
+    const {
+      userName,
+      email,
+      password,
+      gender,
+      age,
+      phone,
+      userType,
+      country,
+      city,
+      postalCode,
+      builidingNumber,
+      flooreNumber,
+      addressLable,
+    } = req.body;
 
     //email check
     const isEmailExist = await User.findOne({ email });
@@ -21,8 +35,21 @@ const registration = catchError(async (req, res, next) => {
     const userObj = { userName, email, password, gender, age, phone, userType };
     //create user in db
     const newUser = await User.create(userObj)
+    //create address obj
+    const addressObj = {
+      userId: newUser._id,
+      country,
+      city,
+      postalCode,
+      builidingNumber,
+      flooreNumber,
+      addressLable,
+      isDefualt:true,
+    };
+    //create address in db
+    const newaddress=await Address.create(addressObj);
     //send the res
-    res.status(201).json({message:"rejistration successfully",data:newUser})
+    res.status(201).json({message:"rejistration successfully",data:newUser,Address:newaddress});
 })
  
 

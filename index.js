@@ -8,7 +8,11 @@ import { config } from "dotenv";
 
 import db_connection from "./Database/Connection.js";
 import * as middlewares from "./Src/Middleware/index.js";
-import { brandRouter, categoryRouter, productRoutes, subCategoryRouter, userRouter } from "./Src/Modules/index.js";
+import { addressRouter, brandRouter, cartRouter, categoryRouter, couponRouter, oredrRouter, productRoutes, subCategoryRouter, userRouter } from "./Src/Modules/index.js";
+import { cronsJobOne } from "./Src/Utils/crons.utils.js";
+import { gracefulShutdown } from "node-schedule";
+
+
 
 
 
@@ -24,9 +28,16 @@ app.use("/sub-category", subCategoryRouter);
 app.use("/brand", brandRouter);
 app.use("/product", productRoutes);
 app.use("/user", userRouter);
+app.use("/address", addressRouter);
+app.use("/cart", cartRouter);
+app.use("/coupon", couponRouter);
+app.use("/order", oredrRouter);
 
 
 db_connection();
+
+cronsJobOne();
+gracefulShutdown();
 
 // handeling unhandled routes
 app.use("*",middlewares.unhandledRoutes);
